@@ -1,4 +1,5 @@
 const express = require("express");
+const helmet = require("helmet");
 const passport = require("passport");
 const session = require("express-session")
 const boom = require("@hapi/boom");
@@ -12,6 +13,7 @@ const app = express();
 // body parser
 app.use(express.json());
 app.use(cookieParser());
+app.use(helmet());
 
 // Todo esto es para poder usar la libreria de passport-twitter
 app.use(session({ secret: config.sessionSecret }));
