@@ -79,16 +79,33 @@ app.get("/user-movies/:userId", async function(req, res, next) {
     const { token } = req.cookies;
 
     const { data, status } = await axios({
-      url: `${config.apiUrl}/api/user-movies/${userId}`,
+      url: `${config.apiUrl}/api/user-movies?userId=${userId}`,
       headers: { Authorization: `Bearer ${token}` },
       method: "get"
-    });
+    })
 
-    if (status !== 200) {
+    let { data: movies, status: statusMovies } = await axios({
+      url: `${config.apiUrl}/api/movies`,
+      headers: { Authorization: `Bearer ${token}` },
+      method: "get"
+    })
+
+    movies = movies.data
+
+    const userMovies = []
+    movies.filter(movie => {
+      data.data.filter(id => {
+        if (id.movieId === movie._id) {
+          userMovies.push(movie)
+        }
+      })
+    })
+
+    if (status !== 200 && statusMovies !== 200) {
       return next(boom.badImplementation());
     }
 
-    res.status(200).json(data);
+    res.status(200).json(userMovies);
   } catch (error) {
     next(error);
   }
